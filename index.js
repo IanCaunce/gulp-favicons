@@ -24,8 +24,9 @@
                     });
                 },
                 function (data, callback) {
-                    var $ = cheerio.load(data, { decodeEntities: false });
-                    $('head').append(code.join('\n'));
+                    var $ = cheerio.load(data, { decodeEntities: false }),
+                        target = $('head').length > 0 ? $('head') : $.root();
+                    target.append(code.join('\n'));
                     return callback(null, $.html());
                 },
                 function (html, callback) {

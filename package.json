@@ -1,6 +1,6 @@
 {
   "name": "gulp-favicons",
-  "version": "2.0.3",
+  "version": "2.0.4",
   "description": "Favicons generator for Gulp",
   "main": "index.js",
   "repository": {
