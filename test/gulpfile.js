@@ -12,6 +12,6 @@ gulp.task('default', function () {
         online: false,
         version: 1.0,
         logging: true,
-        html: "index.html"
+        html: "test/index.html"
     })).pipe(gulp.dest('./images/'));
 });

@@ -33,3 +33,4 @@ node_modules
 
 ### Custom ###
 test/images
+test/index.html
