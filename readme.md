@@ -6,27 +6,17 @@ Favicons generator for Gulp. Simple wrapper around [favicons](https://github.com
 npm install gulp-favicons --save-dev
 ```
 
-Check out favicons for example options. Example usage:
+Check out [favicons.io](http://favicons.io/) for all configuration options. Example usage:
 
 ```js
+var gulp = require('gulp'),
+    favicons = require('../');
+
 gulp.task('default', function () {
-    gulp.src('index.html')
-        .pipe(favicons({
-            files: { dest: 'images/' },
-            settings: { background: '#1d1d1d' }
-        }))
-        .pipe(gulp.dest('./'));
+    gulp.src('logo.png').pipe(favicons({
+        // ...
+        html: "test/index.html"         // HTML files to modify. `string` or `array`
+    })).pipe(gulp.dest('./images/'));
 });
+
 ```
-
-If you don't specify some options, gulp-favicons checks your source HTML file for:
-
-```html
-<title>...</title>
-<meta name="author" content="..." />
-<meta name="description" content="..." />
-<link rel="canonical" href="..." />
-<link rel="favicons" href="..." />
-```
-
-Note: `link[rel="favicons"]` is a custom tag designed for gulp-favicons. It will be removed upon processing.
