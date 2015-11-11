@@ -1,6 +1,6 @@
 {
   "name": "gulp-favicons",
-  "version": "2.0.2",
+  "version": "2.0.3",
   "description": "Favicons generator for Gulp",
   "main": "index.js",
   "repository": {
@@ -25,15 +25,15 @@
   "homepage": "https://github.com/haydenbleasel/gulp-favicons",
   "dependencies": {
     "async": "^1.5.0",
-    "cheerio": "*",
-    "favicons": "*",
-    "gulp-util": "*",
-    "mkdirp": "*",
-    "through2": "*",
-    "underscore": "*"
+    "cheerio": "^0.19.0",
+    "favicons": "^4.0.6",
+    "gulp-util": "^3.0.7",
+    "mkdirp": "^0.5.1",
+    "through2": "^2.0.0",
+    "underscore": "^1.8.3"
   },
   "devDependencies": {
     "eslint": "^1.9.0",
-    "gulp": "*"
+    "gulp": "^3.9.0"
   }
 }
