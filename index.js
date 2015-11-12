@@ -72,8 +72,8 @@
                 if (params.html) {
                     documents = (typeof params.html === 'object' ? params.html : [params.html]);
                     async.each(documents, function (document) {
-                        var filepath = path.join(__dirname, document);
-                        updateDocument(filepath, response.html, function (error) {
+                        console.log(process.cwd(), document, 'doc');
+                        updateDocument(document, response.html, function (error) {
                             return callback(error);
                         })
                     }, function (error2) {
