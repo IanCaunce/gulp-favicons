@@ -8,7 +8,7 @@ gulp.task('default', function () {
         developer: "Hayden Bleasel",
         developerURL: "haydenbleasel.com",
         background: "#020307",
-        path: "favicons/",
+        path: "images/",
         online: false,
         version: 1.0,
         logging: true,
