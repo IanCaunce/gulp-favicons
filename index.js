@@ -1,11 +1,8 @@
-/*jslint node:true, nomen:true, unparam:true*/
-
 (function () {
 
     'use strict';
 
-    var _ = require('underscore'),
-        through2 = require('through2'),
+    var through2 = require('through2'),
         fs = require('fs'),
         cheerio = require('cheerio'),
         gutil = require('gulp-util'),
@@ -20,14 +17,17 @@
             async.waterfall([
                 function (callback) {
                     fs.readFile(document, options, function (error, data) {
-                        return callback(error, data);
+                        return error ? callback(null, null) : callback(error, data);
                     });
                 },
                 function (data, callback) {
-                    var $ = cheerio.load(data, { decodeEntities: false }),
-                        target = $('head').length > 0 ? $('head') : $.root();
-                    target.append(code.join('\n'));
-                    return callback(null, $.html());
+                    var $;
+                    if (data) {
+                        var $ = cheerio.load(data, { decodeEntities: false }),
+                            target = $('head').length > 0 ? $('head') : $.root();
+                        target.append(code.join('\n'));
+                    }
+                    return $ ? callback(null, $.html()) : callback(null, code);
                 },
                 function (html, callback) {
                     fs.writeFile(document, html, options, function (error) {
@@ -39,49 +39,73 @@
             });
         }
 
-        return through2.obj(function (file, encoding, callback) {
+        function processDocuments(documents, html, callback) {
+            async.each(documents, function (document) {
+                updateDocument(document, html, function (error) {
+                    return callback(error);
+                })
+            }, function (error) {
+                return callback(error);
+            });
+        }
+
+        function gulpError(message) {
+            return new gutil.PluginError('gulp-favicons', message);
+        }
+
+        function vinyl(object) {
+            return new gutil.File({
+                path: object.name,
+                contents: Buffer.isBuffer(object.contents) ? object.contents : new Buffer(object.contents)
+            });
+        }
+
+        return through2.obj(function (file, encoding, next) {
 
             var self = this, documents, $;
 
             if (file.isNull()) {
-                callback(null, file);
-                return;
+                return next(null, file);
             }
 
             if (file.isStream()) {
-                callback(new gutil.PluginError('gulp-favicons', 'Streaming not supported'));
-                return;
+                return next(gulpError('Streaming not supported'));
             }
 
-            favicons(file.contents, params, function (error, response) {
-
-                _.each(response.images, function (image) {
-                    self.push(new gutil.File({
-                        path: image.name,
-                        contents: image.contents
-                    }));
-                });
-
-                _.each(response.files, function (file) {
-                    self.push(new gutil.File({
-                        path: file.name,
-                        contents: new Buffer(file.contents)
-                    }));
-                });
-
-                if (params.html) {
-                    documents = (typeof params.html === 'object' ? params.html : [params.html]);
-                    async.each(documents, function (document) {
-                        console.log(process.cwd(), document, 'doc');
-                        updateDocument(document, response.html, function (error) {
-                            return callback(error);
-                        })
-                    }, function (error2) {
-                        return callback(error || error2);
+            async.waterfall([
+                function (callback) {
+                    favicons(file.contents, params, function (error, response) {
+                        return callback(error, response);
                     });
-                } else {
-                    return callback(error);
+                },
+                function (response, callback) {
+                    async.each(response.images, function (image, callback) {
+                        self.push(vinyl(image));
+                        return callback();
+                    }, function (error) {
+                        return callback(error, response);
+                    });
+                },
+                function (response, callback) {
+                    async.each(response.files, function (file, callback) {
+                        self.push(vinyl(file));
+                        return callback();
+                    }, function (error) {
+                        return callback(error, response);
+                    });
+                },
+                function (response, callback) {
+                    if (params.html) {
+                        documents = (typeof params.html === 'object' ? params.html : [params.html]);
+                        processDocuments(documents, response.html, function (error) {
+                            return callback(error);
+                        });
+                    } else {
+                        return callback(null);
+                    }
                 }
+            ], function (error) {
+                return next(error);
             });
 
         });
