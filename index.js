@@ -27,7 +27,7 @@
                             target = $('head').length > 0 ? $('head') : $.root();
                         target.append(code.join('\n'));
                     }
-                    return $ ? callback(null, $.html()) : callback(null, code);
+                    return $ ? callback(null, $.html()) : callback(null, code.join('\n'));
                 },
                 function (html, callback) {
                     fs.writeFile(document, html, options, function (error) {
