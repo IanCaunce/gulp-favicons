@@ -12,6 +12,21 @@
 
     module.exports = function (params) {
 
+        var existingTags = [
+            'link[rel^="apple-touch-icon"]',
+            'link[rel^="apple-touch-startup-image"]',
+            'link[rel="icon"]',
+            'link[rel="mask-icon"]',
+            'link[rel="manifest"]',
+            'link[rel="shortcut icon"]',
+            'link[rel="yandex-tableau-widget"]',
+            'meta[name="apple-mobile-web-app-capable"]',
+            'meta[name="mobile-web-app-capable"]',
+            'meta[name^="msapplication"]',
+            'meta[name="theme-color"]',
+            'meta[property="og:image"]'
+        ];
+
         function updateDocument(document, code, callback) {
             var options = { encoding: 'utf8' };
             async.waterfall([
@@ -21,13 +36,19 @@
                     });
                 },
                 function (data, callback) {
-                    var $;
                     if (data) {
                         var $ = cheerio.load(data, { decodeEntities: false }),
                             target = $('head').length > 0 ? $('head') : $.root();
-                        target.append(code.join('\n'));
+                        async.each(existingTags, function (tag, callback) {
+                            $(tag).remove();
+                            return callback(null);
+                        }, function (error) {
+                            target.append(code.join('\n'));
+                            return callback(error, $.html().replace(/^\s*$[\n\r]{1,}/gm, ''));
+                        });
+                    } else {
+                        return callback(null, code.join('\n'));
                     }
-                    return $ ? callback(null, $.html()) : callback(null, code.join('\n'));
                 },
                 function (html, callback) {
                     fs.writeFile(document, html, options, function (error) {
