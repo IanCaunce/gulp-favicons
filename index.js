@@ -8,7 +8,7 @@
         gutil = require('gulp-util'),
         path = require('path'),
         async = require('async'),
-        favicons = require('favicons');
+        favicons = require('favicons/es5');
 
     module.exports = function (params) {
 
