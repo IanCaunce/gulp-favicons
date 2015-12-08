@@ -10,7 +10,7 @@ Check out [favicons.io](http://favicons.io/) for all configuration options. Exam
 
 ```js
 var gulp = require('gulp'),
-    favicons = require('../');
+    favicons = require('gulp-favicons');
 
 gulp.task('default', function () {
     gulp.src('logo.png').pipe(favicons({
