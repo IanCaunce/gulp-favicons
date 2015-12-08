@@ -9,14 +9,23 @@ npm install gulp-favicons --save-dev
 Check out [favicons.io](http://favicons.io/) for all configuration options. Example usage:
 
 ```js
-var gulp = require('gulp'),
-    favicons = require('gulp-favicons');
+var favicons = require("gulp-favicons");
 
-gulp.task('default', function () {
-    gulp.src('logo.png').pipe(favicons({
-        // ...
-        html: "test/index.html"         // HTML files to modify. `string` or `array`
-    })).pipe(gulp.dest('./images/'));
+gulp.task("default", function () {
+    gulp.src("logo.png").pipe(favicons({
+        appName: "My App",
+        appDescription: "This is my application",
+        developerName: "Hayden Bleasel",
+        developerURL: "http://haydenbleasel.com/",
+        background: "#020307",
+        path: "favicons/",
+        url: "http://haydenbleasel.com/",
+        display: "standalone",
+        orientation: "portrait",
+        version: 1.0,
+        logging: false,
+        online: false,
+        html: "index.html"
+    })).pipe(gulp.dest("./"));
 });
-
 ```
