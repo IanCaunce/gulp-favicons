@@ -24,7 +24,8 @@
             'meta[name="mobile-web-app-capable"]',
             'meta[name^="msapplication"]',
             'meta[name="theme-color"]',
-            'meta[property="og:image"]'
+            'meta[property="og:image"]',
+            'meta[property="twitter"]'
         ];
 
         function updateDocument(document, code, callback) {
